@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Plant Disease Detector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+
+  <!-- Background botanical decoration -->
+  <div class="bg-decoration">
+    <svg class="leaf-bg" viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="600" cy="150" rx="220" ry="90" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(-35 600 150)"/>
+      <line x1="600" y1="60" x2="600" y2="240" stroke="currentColor" stroke-width="1" transform="rotate(-35 600 150)"/>
+      <ellipse cx="120" cy="650" rx="160" ry="65" fill="none" stroke="currentColor" stroke-width="1" transform="rotate(20 120 650)"/>
+      <line x1="120" y1="585" x2="120" y2="715" stroke="currentColor" stroke-width="1" transform="rotate(20 120 650)"/>
+    </svg>
+  </div>
+
+  <div class="wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">🌿</span>
+        <span class="logo-text">PlantScan</span>
+      </div>
+      <p class="tagline">AI-Powered Leaf Disease Detection</p>
+    </header>
+
+    <!-- Main card -->
+    <main class="card">
+
+      <!-- Input options -->
+      <section class="input-section" id="inputSection">
+        <h1 class="card-title">Diagnose Your Plant</h1>
+        <p class="card-subtitle">Upload a leaf photo or take one with your camera to detect diseases instantly.</p>
+
+        <div class="action-buttons">
+          <!-- Upload -->
+          <label class="action-btn upload-btn" for="fileInput">
+            <span class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </span>
+            <span class="btn-label">Upload Image</span>
+            <span class="btn-sub">JPG, PNG, WEBP</span>
+          </label>
+          <input type="file" id="fileInput" accept="image/*" hidden />
+
+          <!-- Camera -->
+          <button class="action-btn camera-btn" id="cameraBtn">
+            <span class="btn-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            </span>
+            <span class="btn-label">Take Photo</span>
+            <span class="btn-sub">Use camera</span>
+          </button>
+        </div>
+
+        <!-- Supported plants hint -->
+        <div class="supported-hint">
+          <span>Supports:</span>
+          Apple · Tomato · Corn · Grape · Potato · Peach · Pepper · Strawberry · more
+        </div>
+      </section>
+
+      <!-- Camera view -->
+      <section class="camera-section hidden" id="cameraSection">
+        <div class="camera-frame">
+          <video id="videoFeed" autoplay playsinline></video>
+          <div class="camera-overlay">
+            <div class="scan-corner tl"></div>
+            <div class="scan-corner tr"></div>
+            <div class="scan-corner bl"></div>
+            <div class="scan-corner br"></div>
+          </div>
+        </div>
+        <div class="camera-controls">
+          <button class="ctrl-btn secondary" id="cancelCameraBtn">✕ Cancel</button>
+          <button class="ctrl-btn primary" id="captureBtn">📸 Capture</button>
+        </div>
+        <canvas id="captureCanvas" hidden></canvas>
+      </section>
+
+      <!-- Preview + Analyze -->
+      <section class="preview-section hidden" id="previewSection">
+        <div class="preview-wrap">
+          <img id="previewImg" src="" alt="Preview" />
+          <button class="change-btn" id="changeBtn">↩ Change</button>
+        </div>
+        <button class="analyze-btn" id="analyzeBtn">
+          <span id="analyzeBtnText">🔬 Analyze Leaf</span>
+          <span class="spinner hidden" id="spinner"></span>
+        </button>
+      </section>
+
+      <!-- Result -->
+      <section class="result-section hidden" id="resultSection">
+        <div class="result-card" id="resultCard">
+          <div class="result-status-icon" id="resultIcon"></div>
+          <div class="result-badge" id="resultBadge"></div>
+
+          <div class="result-details">
+            <div class="detail-row">
+              <span class="detail-label">Plant</span>
+              <span class="detail-value" id="resultPlant">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Condition</span>
+              <span class="detail-value" id="resultDisease">—</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Confidence</span>
+              <div class="confidence-bar-wrap">
+                <div class="confidence-bar">
+                  <div class="confidence-fill" id="confidenceFill"></div>
+                </div>
+                <span class="confidence-pct" id="confidencePct">—</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="result-preview-thumb">
+            <img id="resultThumb" src="" alt="" />
+          </div>
+        </div>
+
+        <button class="reset-btn" id="resetBtn">🔄 Scan Another Plant</button>
+      </section>
+
+      <!-- Error -->
+      <div class="error-toast hidden" id="errorToast">
+        <span id="errorMsg">Something went wrong.</span>
+      </div>
+
+    </main>
+
+    <footer class="footer">
+      Powered by ResNet-50 · 38 plant disease classes
+    </footer>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
