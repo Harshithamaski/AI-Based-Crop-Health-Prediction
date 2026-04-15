@@ -1,7 +1,5 @@
-# AI-Based-Crop-Health-Prediction
-AI-based crop disease detection using ResNet-50 and Flask
-# AI-Based Crop Health Prediction
-This project detects plant diseases using deep learning (ResNet-50).
+#AI-Based Crop Health Prediction
+This project detects plant diseases using deep learning model (ResNet-50).
 ## Features
 - Upload leaf image
 - Predict disease
